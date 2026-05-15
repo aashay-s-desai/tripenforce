@@ -372,6 +372,10 @@
     .book-error { margin: 10px 20px 0; padding: 10px 12px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 6px; font-size: 12px; color: var(--red-text); }
     .book-error ul { margin: 6px 0 0 16px; }
     .book-error li { margin-top: 2px; }
+    .btn-external { display: block; margin-top: 7px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--text-2); text-decoration: none; text-align: center; white-space: nowrap; transition: border-color 0.15s, color 0.15s; }
+    .btn-external:hover { border-color: var(--accent); color: var(--accent); }
+    .confirm-purchase-btn { display: inline-block; margin-top: 12px; padding: 8px 16px; background: var(--accent); color: var(--accent-fg); border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.15s; }
+    .confirm-purchase-btn:hover { background: var(--accent-hover); }
 
     /* Booking confirm */
     .confirm-block { padding: 16px 20px; }
@@ -794,10 +798,18 @@
       <div class="fl-right">
         ${compBadge}
         <div class="fl-price">$${Number(f.price || 0).toFixed(2)}</div>
-        <button class="btn-book" onclick="bookFlight(this, '${esc(f.flight_id)}', ${safeJson(f)}, '${userId}', '${formData?.origin || ""}', '${formData?.destination || ""}')">Book this flight</button>
+        <button class="btn-book" onclick="bookFlight(this, '${esc(f.flight_id)}', ${safeJson(f)}, '${userId}', '${formData?.origin || ""}', '${formData?.destination || ""}')">Approve &amp; track</button>
+        <a class="btn-external" href="${googleFlightsUrl(f)}" target="_blank" rel="noopener">Book on Google Flights ↗</a>
       </div>
     `;
     return card;
+  }
+
+  function googleFlightsUrl(f) {
+    const date = f.departure_time ? f.departure_time.slice(0, 10) : "";
+    const origin = encodeURIComponent(f.origin || "");
+    const dest = encodeURIComponent(f.destination || "");
+    return `https://www.google.com/travel/flights?q=flights+from+${origin}+to+${dest}+on+${encodeURIComponent(date)}`;
   }
 
   function fmtDT(iso) {
@@ -824,7 +836,7 @@
   // ── Book a flight ──────────────────────────────────────
   function bookFlight(btn, flightId, flight, userId, origin, destination) {
     btn.disabled = true;
-    btn.textContent = "Booking…";
+    btn.textContent = "Saving…";
 
     fetch(`/book/${encodeURIComponent(flightId)}`, {
       method: "POST",
@@ -874,9 +886,10 @@
           </div>
           <div class="confirm-detail">
             ${esc(data.message || "Booking recorded.")}
-            ${data.approval_required ? " A manager will review this request." : ""}
+            ${data.approval_required ? " A manager will review this request before you purchase." : " You're cleared to purchase."}
           </div>
-          ${data.booking_id ? `<div class="booking-id">Booking ID: ${esc(data.booking_id)}</div>` : ""}
+          ${data.booking_id ? `<div class="booking-id">Ref: ${esc(data.booking_id)}</div>` : ""}
+          ${!data.approval_required ? `<a class="confirm-purchase-btn" href="${googleFlightsUrl(flight)}" target="_blank" rel="noopener">Complete purchase on Google Flights ↗</a>` : ""}
         </div>
       `;
       list.parentElement.replaceChild(confirm, list);
