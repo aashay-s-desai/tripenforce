@@ -3,6 +3,9 @@
 AI-powered corporate travel booking agent with policy enforcement.  
 Built with FastAPI, Claude (tool use), Duffel API, and PostgreSQL.
 
+**Live demo:** https://tripenforce.up.railway.app  
+**Admin dashboard:** https://tripenforce.up.railway.app/admin
+
 ---
 
 ## Architecture
@@ -77,7 +80,7 @@ On first boot it will:
 - Create all tables
 - Seed one test company (`Acme Corp`), three users, and default policy rules
 
-API docs: http://localhost:8000/docs
+API docs: https://tripenforce.up.railway.app/docs
 
 ---
 
@@ -98,7 +101,7 @@ The sandbox returns real flight schedules with fake payment processing. No credi
 ### Plan a trip
 
 ```bash
-curl -s -X POST http://localhost:8000/trip \
+curl -s -X POST https://tripenforce.up.railway.app/trip \
   -H "Content-Type: application/json" \
   -d '{
     "request": "Economy flight from Chicago to New York departing 2026-06-01",
@@ -110,7 +113,7 @@ curl -s -X POST http://localhost:8000/trip \
 ### Confirm a booking
 
 ```bash
-curl -s -X POST "http://localhost:8000/book/FLIGHT_ID_HERE" \
+curl -s -X POST "https://tripenforce.up.railway.app/book/FLIGHT_ID_HERE" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "00000000-0000-0000-0000-000000000011",
@@ -130,13 +133,13 @@ curl -s -X POST "http://localhost:8000/book/FLIGHT_ID_HERE" \
 ### View current policy
 
 ```bash
-curl -s http://localhost:8000/policy/00000000-0000-0000-0000-000000000001 | jq .
+curl -s https://tripenforce.up.railway.app/policy/00000000-0000-0000-0000-000000000001 | jq .
 ```
 
 ### Update policy (admin)
 
 ```bash
-curl -s -X PUT http://localhost:8000/policy/00000000-0000-0000-0000-000000000001 \
+curl -s -X PUT https://tripenforce.up.railway.app/policy/00000000-0000-0000-0000-000000000001 \
   -H "Content-Type: application/json" \
   -d '{
     "rules": [
@@ -161,14 +164,14 @@ curl -s -X PUT http://localhost:8000/policy/00000000-0000-0000-0000-000000000001
 ### Spend summary
 
 ```bash
-curl -s http://localhost:8000/spend/00000000-0000-0000-0000-000000000001 | jq .
+curl -s https://tripenforce.up.railway.app/spend/00000000-0000-0000-0000-000000000001 | jq .
 ```
 
 ### WebSocket streaming (wscat)
 
 ```bash
 npm install -g wscat
-wscat -c ws://localhost:8000/trip/stream
+wscat -c wss://tripenforce.up.railway.app/trip/stream
 # paste: {"request":"Economy ORD to JFK 2026-06-01","user_id":"00000000-0000-0000-0000-000000000011","company_id":"00000000-0000-0000-0000-000000000001"}
 ```
 
