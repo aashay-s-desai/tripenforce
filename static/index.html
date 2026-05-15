@@ -378,6 +378,7 @@
     .confirm-purchase-btn:hover { background: var(--accent-hover); }
 
     /* Booking confirm */
+    .flight-card.card-confirmed { border-color: var(--green-border); background: var(--green-bg); }
     .confirm-block { padding: 16px 20px; }
     .confirm-block .confirm-title { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
     .confirm-block .confirm-detail { font-size: 12px; color: var(--text-2); line-height: 1.6; }
@@ -874,25 +875,22 @@
       }
 
       const card = btn.closest(".flight-card");
-      const list = card.parentElement;
-      const confirm = document.createElement("div");
-      confirm.className = "rec-panel";
-      confirm.innerHTML = `
+      card.classList.add("card-confirmed");
+      card.innerHTML = `
         <div class="confirm-block">
           <div class="confirm-title">
             ${data.approval_required
               ? `<span class="badge badge-amber">⚠ Submitted for approval</span>`
-              : `<span class="badge badge-green">✓ Booking confirmed</span>`}
+              : `<span class="badge badge-green">✓ Approved &amp; tracked</span>`}
           </div>
           <div class="confirm-detail">
             ${esc(data.message || "Booking recorded.")}
-            ${data.approval_required ? " A manager will review this request before you purchase." : " You're cleared to purchase."}
+            ${data.approval_required ? " A manager will review before you purchase." : " You're cleared to purchase."}
           </div>
           ${data.booking_id ? `<div class="booking-id">Ref: ${esc(data.booking_id)}</div>` : ""}
           ${!data.approval_required ? `<a class="confirm-purchase-btn" href="${googleFlightsUrl(flight)}" target="_blank" rel="noopener">Complete purchase on Google Flights ↗</a>` : ""}
         </div>
       `;
-      list.parentElement.replaceChild(confirm, list);
     })
     .catch(err => {
       btn.disabled = false;
