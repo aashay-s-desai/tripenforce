@@ -247,7 +247,7 @@ class DuffelProvider(FlightProvider):
         }
 
         def _call() -> list[Flight]:
-            with httpx.Client(timeout=20.0) as client:
+            with httpx.Client(timeout=8.0) as client:
                 resp = client.post(f"{settings.duffel_api_base}/air/offer_requests", headers=headers, json=payload)
                 resp.raise_for_status()
                 offer_request_id = resp.json()["data"]["id"]
@@ -362,7 +362,7 @@ class AmadeusProvider(FlightProvider):
 
     def search(self, origin, destination, departure_date, passengers, cabin_class) -> list[Flight]:
         def _call() -> list[Flight]:
-            with httpx.Client(timeout=20.0) as client:
+            with httpx.Client(timeout=8.0) as client:
                 token = self._get_token(client)
                 resp = client.get(
                     self._SEARCH_URL,
