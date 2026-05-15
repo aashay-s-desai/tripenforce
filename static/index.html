@@ -96,7 +96,7 @@
       flex-shrink: 0;
       transition: background 0.2s, border-color 0.2s;
     }
-    .logo { font-size: 15px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
+    .logo { font-size: 15px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .logo-mark { color: var(--accent); }
     .divider { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
     .subtitle { font-size: 12px; color: var(--text-2); font-weight: 500; }
@@ -392,7 +392,7 @@
 
 <!-- ── Header ───────────────────────────────────────────── -->
 <header>
-  <div class="logo"><span class="logo-mark">✈</span> TripEnforce</div>
+  <div class="logo" onclick="location.reload()"><span class="logo-mark">✈</span> TripEnforce</div>
   <div class="divider"></div>
   <div class="subtitle">Corporate Travel</div>
   <div class="header-right">
