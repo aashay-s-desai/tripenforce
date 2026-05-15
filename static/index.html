@@ -654,7 +654,8 @@
       think.addStep(" ", describeResult(data.tool, data.result), false);
 
     } else if (data.type === "done") {
-      think.setDone("Done — " + ((data.result?.recommendation?.all_compliant || []).length) + " compliant options");
+      const compliantCount = (data.result?.all_compliant || data.result?.recommendation?.all_compliant || []).length;
+      think.setDone("Done — " + compliantCount + " compliant option" + (compliantCount !== 1 ? "s" : ""));
       renderRec(rv, data.result, userId, formData);
 
     } else if (data.type === "error") {
