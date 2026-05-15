@@ -159,16 +159,19 @@
       gap: 4px;
     }
     .back-link:hover { color: var(--text-secondary); }
-    .theme-btn {
-      background: none;
+    .icon-btn {
+      width: 32px; height: 32px;
+      border-radius: 6px;
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 4px 8px;
-      font-size: 12px;
-      cursor: pointer;
+      background: var(--bg-secondary);
       color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      flex-shrink: 0;
     }
-    .theme-btn:hover { background: var(--bg-hover); }
+    .icon-btn:hover { border-color: var(--border-focus); background: var(--bg-hover); color: var(--text); }
 
     /* Main content */
     .main {
@@ -545,9 +548,6 @@
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
       Booking app
     </a>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">
-      <span id="theme-label">Dark</span>
-    </button>
   </div>
 </nav>
 
@@ -566,6 +566,7 @@
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 8A6 6 0 102 8"/><polyline points="14 4 14 8 10 8"/></svg>
         Refresh
       </button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">☾</button>
     </div>
   </div>
   <div class="content">
@@ -705,7 +706,7 @@
     const saved = localStorage.getItem('te_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('theme-label').textContent = saved === 'dark' ? 'Light' : 'Dark';
+      document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀' : '☾';
     });
   })();
 
@@ -714,7 +715,7 @@
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('te_theme', next);
-    document.getElementById('theme-label').textContent = next === 'dark' ? 'Light' : 'Dark';
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '☀' : '☾';
   }
 
   // State
