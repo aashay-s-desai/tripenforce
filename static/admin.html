@@ -138,6 +138,16 @@
       align-items: center;
       justify-content: space-between;
     }
+    .sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .sidebar-back:hover { color: var(--text); }
     .back-link {
       font-size: 12px;
       color: var(--text-tertiary);
@@ -499,6 +509,10 @@
 <!-- Sidebar -->
 <nav class="sidebar">
   <div class="sidebar-header">
+    <a href="/" class="sidebar-back">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
+      Back to booking
+    </a>
     <div class="sidebar-logo"><span>✈</span> TripEnforce</div>
     <div class="sidebar-subtitle">Admin Console</div>
   </div>
