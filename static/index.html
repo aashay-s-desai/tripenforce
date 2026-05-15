@@ -367,7 +367,11 @@
     .violation-row:last-child { border-bottom: none; padding-bottom: 0; }
     .nearest { margin-top: 10px; padding: 10px 12px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 6px; font-size: 12px; color: var(--green-text); line-height: 1.5; }
 
-    .more-note { padding: 11px 20px; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--border); }
+    .more-note { padding: 11px 20px; font-size: 12px; color: var(--accent); border-top: 1px solid var(--border); background: none; border-left: none; border-right: none; border-bottom: none; cursor: pointer; text-align: left; width: 100%; font-family: inherit; font-weight: 500; }
+    .more-note:hover { color: var(--accent-hover); background: var(--bg-hover); }
+    .book-error { margin: 10px 20px 0; padding: 10px 12px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 6px; font-size: 12px; color: var(--red-text); }
+    .book-error ul { margin: 6px 0 0 16px; }
+    .book-error li { margin-top: 2px; }
 
     /* Booking confirm */
     .confirm-block { padding: 16px 20px; }
@@ -702,7 +706,7 @@
     const summaryDiv = document.createElement("div");
     summaryDiv.className = "rec-summary";
     summaryDiv.innerHTML = `
-      <div class="rec-text">${esc(rec.recommendation_text || "")}</div>
+      <div class="rec-text">${renderMd(rec.recommendation_text || "")}</div>
       ${tags ? `<div class="rec-tags">${tags}</div>` : ""}
     `;
     panel.appendChild(summaryDiv);
@@ -727,9 +731,22 @@
       flights.slice(0, 5).forEach((f, i) => list.appendChild(mkFlightCard(f, i === 0, userId, formData)));
       panel.appendChild(list);
       if (flights.length > 5) {
-        const more = document.createElement("div");
+        const overflow = document.createElement("div");
+        overflow.className = "flights-overflow";
+        overflow.style.display = "none";
+        flights.slice(5).forEach((f) => overflow.appendChild(mkFlightCard(f, false, userId, formData)));
+        panel.appendChild(overflow);
+
+        const more = document.createElement("button");
         more.className = "more-note";
-        more.textContent = `+ ${flights.length - 5} more compliant options`;
+        more.textContent = `+ ${flights.length - 5} more compliant option${flights.length - 5 > 1 ? "s" : ""}`;
+        more.onclick = () => {
+          const shown = overflow.style.display !== "none";
+          overflow.style.display = shown ? "none" : "block";
+          more.textContent = shown
+            ? `+ ${flights.length - 5} more compliant option${flights.length - 5 > 1 ? "s" : ""}`
+            : "Show fewer";
+        };
         panel.appendChild(more);
       }
     }
@@ -797,6 +814,12 @@
     return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
 
+  function renderMd(text) {
+    return esc(text)
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+  }
+
   // ── Book a flight ──────────────────────────────────────
   function bookFlight(btn, flightId, flight, userId, origin, destination) {
     btn.disabled = true;
@@ -818,12 +841,27 @@
         price: flight.price,
       }),
     })
-    .then(r => r.json())
-    .then(data => {
+    .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+    .then(({ ok, data }) => {
+      if (!ok) {
+        const detail = data?.detail;
+        const msg = typeof detail === "object"
+          ? (detail.message || JSON.stringify(detail))
+          : (detail || "Booking blocked by policy.");
+        const violations = typeof detail === "object" ? (detail.violations || []) : [];
+        const card = btn.closest(".flight-card");
+        const errEl = document.createElement("div");
+        errEl.className = "book-error";
+        errEl.innerHTML = `<strong>Booking blocked</strong> — ${esc(msg)}`
+          + (violations.length ? `<ul>${violations.map(v => `<li>${esc(v)}</li>`).join("")}</ul>` : "");
+        card.appendChild(errEl);
+        btn.disabled = false;
+        btn.textContent = "Book this flight";
+        return;
+      }
+
       const card = btn.closest(".flight-card");
       const list = card.parentElement;
-
-      // Replace the flight list with a confirmation card
       const confirm = document.createElement("div");
       confirm.className = "rec-panel";
       confirm.innerHTML = `
@@ -845,7 +883,7 @@
     .catch(err => {
       btn.disabled = false;
       btn.textContent = "Book this flight";
-      alert("Booking failed: " + err.message);
+      alert("Booking failed: " + (err.message || "Unknown error"));
     });
   }
 </script>
