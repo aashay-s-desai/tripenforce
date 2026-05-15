@@ -9,43 +9,43 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #ffffff;
-      --bg-secondary: #f7f7f5;
-      --bg-hover: #f0f0ee;
-      --border: #e5e5e3;
-      --border-focus: #a0a09e;
-      --text: #1a1a19;
-      --text-secondary: #6b6b68;
-      --text-tertiary: #9b9b98;
-      --accent: #2d7d46;
-      --accent-hover: #236338;
-      --accent-light: #e8f5ec;
-      --warn: #c4821a;
-      --warn-light: #fdf3e3;
-      --danger: #c4341a;
-      --danger-light: #fdeae7;
-      --danger-hover: #a32a14;
+      --bg: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-hover: #1A1A1A;
+      --border: #222222;
+      --border-focus: #01D46A;
+      --text: #FFFFFF;
+      --text-secondary: #9CA3AF;
+      --text-tertiary: #6B7280;
+      --accent: #01D46A;
+      --accent-hover: #00B85C;
+      --accent-light: #001A0D;
+      --warn: #F59E0B;
+      --warn-light: #1A1000;
+      --danger: #EF4444;
+      --danger-light: #1A0505;
+      --danger-hover: #DC2626;
       --radius: 8px;
       --radius-sm: 4px;
       --sidebar: 220px;
     }
-    [data-theme="dark"] {
-      --bg: #1a1a1a;
-      --bg-secondary: #222222;
-      --bg-hover: #2a2a2a;
-      --border: #333333;
-      --border-focus: #555555;
-      --text: #e8e8e6;
-      --text-secondary: #9b9b98;
-      --text-tertiary: #6b6b68;
-      --accent: #4ade80;
-      --accent-hover: #22c55e;
-      --accent-light: #1a2e22;
-      --warn: #fbbf24;
-      --warn-light: #2a2010;
-      --danger: #f87171;
-      --danger-light: #2a1515;
-      --danger-hover: #ef4444;
+    [data-theme="light"] {
+      --bg: #F9FAFB;
+      --bg-secondary: #FFFFFF;
+      --bg-hover: #F3F4F6;
+      --border: #E5E7EB;
+      --border-focus: #009E4F;
+      --text: #111111;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --accent: #009E4F;
+      --accent-hover: #007A3D;
+      --accent-light: #F0FDF4;
+      --warn: #D97706;
+      --warn-light: #FFFBEB;
+      --danger: #DC2626;
+      --danger-light: #FEF2F2;
+      --danger-hover: #B91C1C;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -499,7 +499,7 @@
 <!-- Sidebar -->
 <nav class="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-logo">Trip<span>Enforce</span></div>
+    <div class="sidebar-logo"><span>✦</span> TripEnforce</div>
     <div class="sidebar-subtitle">Admin Console</div>
   </div>
   <div class="sidebar-nav">
@@ -686,15 +686,15 @@
 <script>
   // Theme
   (function() {
-    const saved = localStorage.getItem('te_theme') || 'light';
-    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    const saved = localStorage.getItem('te_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('theme-label').textContent = saved === 'dark' ? 'Light' : 'Dark';
     });
   })();
 
   function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('te_theme', next);

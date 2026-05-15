@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,24 +8,57 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     /* ── Theme tokens ─────────────────────────────────────── */
+    :root[data-theme="dark"] {
+      --bg:             #0A0A0A;
+      --bg-card:        #111111;
+      --bg-hover:       #1A1A1A;
+      --bg-input:       #111111;
+      --border:         #222222;
+      --border-hover:   #333333;
+      --border-focus:   #01D46A;
+      --text-1:         #FFFFFF;
+      --text-2:         #9CA3AF;
+      --text-3:         #6B7280;
+      --accent:         #01D46A;
+      --accent-fg:      #0A0A0A;
+      --accent-hover:   #00B85C;
+      --green:          #01D46A;
+      --green-bg:       #001A0D;
+      --green-border:   #003820;
+      --green-text:     #01D46A;
+      --red:            #EF4444;
+      --red-bg:         #1A0505;
+      --red-border:     #3D0A0A;
+      --red-text:       #FCA5A5;
+      --amber:          #F59E0B;
+      --amber-bg:       #1A1000;
+      --amber-border:   #3D2800;
+      --amber-text:     #FCD34D;
+      --mono-bg:        #0D0D0D;
+      --step-accent:    #01D46A;
+      --header-bg:      #0A0A0A;
+      --header-border:  #1A1A1A;
+      --scrollbar:      #222222;
+      --label:          #9CA3AF;
+    }
     :root[data-theme="light"] {
-      --bg:             #FAFAFA;
+      --bg:             #F9FAFB;
       --bg-card:        #FFFFFF;
-      --bg-hover:       #F9FAFB;
+      --bg-hover:       #F3F4F6;
       --bg-input:       #FFFFFF;
       --border:         #E5E7EB;
       --border-hover:   #D1D5DB;
-      --border-focus:   #0F172A;
-      --text-1:         #1A1A1A;
+      --border-focus:   #009E4F;
+      --text-1:         #111111;
       --text-2:         #6B7280;
       --text-3:         #9CA3AF;
-      --accent:         #0F172A;
+      --accent:         #009E4F;
       --accent-fg:      #FFFFFF;
-      --accent-hover:   #1E293B;
-      --green:          #10B981;
-      --green-bg:       #ECFDF5;
-      --green-border:   #A7F3D0;
-      --green-text:     #065F46;
+      --accent-hover:   #007A3D;
+      --green:          #009E4F;
+      --green-bg:       #F0FDF4;
+      --green-border:   #BBF7D0;
+      --green-text:     #166534;
       --red:            #EF4444;
       --red-bg:         #FEF2F2;
       --red-border:     #FECACA;
@@ -35,44 +68,11 @@
       --amber-border:   #FDE68A;
       --amber-text:     #92400E;
       --mono-bg:        #F8FAFC;
-      --step-accent:    #0F172A;
+      --step-accent:    #009E4F;
       --header-bg:      #FFFFFF;
       --header-border:  #E5E7EB;
       --scrollbar:      #E5E7EB;
       --label:          #374151;
-    }
-    :root[data-theme="dark"] {
-      --bg:             #111318;
-      --bg-card:        #1A1D24;
-      --bg-hover:       #1F2330;
-      --bg-input:       #1A1D24;
-      --border:         #2A2D36;
-      --border-hover:   #3D4152;
-      --border-focus:   #CBD5E1;
-      --text-1:         #F1F5F9;
-      --text-2:         #94A3B8;
-      --text-3:         #64748B;
-      --accent:         #F1F5F9;
-      --accent-fg:      #0F172A;
-      --accent-hover:   #E2E8F0;
-      --green:          #10B981;
-      --green-bg:       #022C22;
-      --green-border:   #064E3B;
-      --green-text:     #34D399;
-      --red:            #EF4444;
-      --red-bg:         #1F0606;
-      --red-border:     #450A0A;
-      --red-text:       #FCA5A5;
-      --amber:          #F59E0B;
-      --amber-bg:       #1C1400;
-      --amber-border:   #451A03;
-      --amber-text:     #FCD34D;
-      --mono-bg:        #13161D;
-      --step-accent:    #94A3B8;
-      --header-bg:      #1A1D24;
-      --header-border:  #2A2D36;
-      --scrollbar:      #2A2D36;
-      --label:          #CBD5E1;
     }
 
     /* ── Reset ────────────────────────────────────────────── */
@@ -97,6 +97,7 @@
       transition: background 0.2s, border-color 0.2s;
     }
     .logo { font-size: 15px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
+    .logo-mark { color: var(--accent); }
     .divider { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
     .subtitle { font-size: 12px; color: var(--text-2); font-weight: 500; }
     .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
@@ -382,7 +383,7 @@
 
 <!-- ── Header ───────────────────────────────────────────── -->
 <header>
-  <div class="logo">✈ TripEnforce</div>
+  <div class="logo"><span class="logo-mark">✦</span> TripEnforce</div>
   <div class="divider"></div>
   <div class="subtitle">Corporate Travel</div>
   <div class="header-right">
@@ -495,7 +496,7 @@
   // ── Theme ──────────────────────────────────────────────
   const html = document.documentElement;
   const themeBtn = document.getElementById("themeBtn");
-  setTheme(localStorage.getItem("theme") || "light");
+  setTheme(localStorage.getItem("theme") || "dark");
 
   function setTheme(t) {
     html.setAttribute("data-theme", t);
