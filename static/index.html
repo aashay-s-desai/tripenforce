@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TripEnforce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Theme tokens ─────────────────────────────────────── */
+    :root[data-theme="light"] {
+      --bg:             #FAFAFA;
+      --bg-card:        #FFFFFF;
+      --bg-hover:       #F9FAFB;
+      --bg-input:       #FFFFFF;
+      --border:         #E5E7EB;
+      --border-hover:   #D1D5DB;
+      --border-focus:   #0F172A;
+      --text-1:         #1A1A1A;
+      --text-2:         #6B7280;
+      --text-3:         #9CA3AF;
+      --accent:         #0F172A;
+      --accent-fg:      #FFFFFF;
+      --accent-hover:   #1E293B;
+      --green:          #10B981;
+      --green-bg:       #ECFDF5;
+      --green-border:   #A7F3D0;
+      --green-text:     #065F46;
+      --red:            #EF4444;
+      --red-bg:         #FEF2F2;
+      --red-border:     #FECACA;
+      --red-text:       #991B1B;
+      --amber:          #F59E0B;
+      --amber-bg:       #FFFBEB;
+      --amber-border:   #FDE68A;
+      --amber-text:     #92400E;
+      --mono-bg:        #F8FAFC;
+      --step-accent:    #0F172A;
+      --header-bg:      #FFFFFF;
+      --header-border:  #E5E7EB;
+      --scrollbar:      #E5E7EB;
+      --label:          #374151;
+    }
+    :root[data-theme="dark"] {
+      --bg:             #111318;
+      --bg-card:        #1A1D24;
+      --bg-hover:       #1F2330;
+      --bg-input:       #1A1D24;
+      --border:         #2A2D36;
+      --border-hover:   #3D4152;
+      --border-focus:   #CBD5E1;
+      --text-1:         #F1F5F9;
+      --text-2:         #94A3B8;
+      --text-3:         #64748B;
+      --accent:         #F1F5F9;
+      --accent-fg:      #0F172A;
+      --accent-hover:   #E2E8F0;
+      --green:          #10B981;
+      --green-bg:       #022C22;
+      --green-border:   #064E3B;
+      --green-text:     #34D399;
+      --red:            #EF4444;
+      --red-bg:         #1F0606;
+      --red-border:     #450A0A;
+      --red-text:       #FCA5A5;
+      --amber:          #F59E0B;
+      --amber-bg:       #1C1400;
+      --amber-border:   #451A03;
+      --amber-text:     #FCD34D;
+      --mono-bg:        #13161D;
+      --step-accent:    #94A3B8;
+      --header-bg:      #1A1D24;
+      --header-border:  #2A2D36;
+      --scrollbar:      #2A2D36;
+      --label:          #CBD5E1;
+    }
+
+    /* ── Reset ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: "Inter", -apple-system, sans-serif; font-size: 14px; }
+    body { background: var(--bg); color: var(--text-1); display: flex; flex-direction: column; height: 100vh; transition: background 0.2s, color 0.2s; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+    /* ── Header ───────────────────────────────────────────── */
+    header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      height: 52px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .logo { font-size: 15px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
+    .divider { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
+    .subtitle { font-size: 12px; color: var(--text-2); font-weight: 500; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .hdr-label { font-size: 12px; color: var(--text-3); font-weight: 500; }
+
+    select, input[type="date"], input[type="number"], input[type="text"] {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:hover, input:hover { border-color: var(--border-hover); }
+    select:focus, input:focus { border-color: var(--border-focus); }
+    select { padding: 5px 8px; cursor: pointer; }
+
+    .icon-btn {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .icon-btn:hover { border-color: var(--border-hover); background: var(--bg-hover); color: var(--text-1); }
+
+    .admin-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      text-decoration: none;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .admin-link:hover { border-color: var(--border-hover); color: var(--text-1); background: var(--bg-hover); }
+
+    /* ── Main scroll area ─────────────────────────────────── */
+    .main { flex: 1; overflow-y: auto; padding: 40px 32px; }
+    .center { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Form card ────────────────────────────────────────── */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .form-title { font-size: 16px; font-weight: 600; color: var(--text-1); margin-bottom: 20px; letter-spacing: -0.2px; }
+
+    .form-grid { display: grid; gap: 14px; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 120px; gap: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--label);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 9px 11px;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+    .field input::placeholder { color: var(--text-3); }
+
+    .prefs-field { margin-top: 4px; }
+    .prefs-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .prefs-field textarea {
+      width: 100%;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 11px;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      min-height: 40px;
+      max-height: 100px;
+      transition: border-color 0.15s;
+    }
+    .prefs-field textarea::placeholder { color: var(--text-3); }
+    .prefs-field textarea:focus { border-color: var(--border-focus); }
+
+    .form-footer { display: flex; align-items: center; justify-content: flex-end; margin-top: 20px; gap: 12px; }
+    .form-hint { font-size: 12px; color: var(--text-3); flex: 1; }
+
+    .btn-primary {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-fg);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Results header ───────────────────────────────────── */
+    .results-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .back-btn {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .back-btn:hover { border-color: var(--border-hover); color: var(--text-1); background: var(--bg-hover); }
+    .search-summary { font-size: 13px; color: var(--text-2); }
+    .search-summary strong { color: var(--text-1); font-weight: 600; }
+
+    /* ── Thinking panel ───────────────────────────────────── */
+    .thinking-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .thinking-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      user-select: none;
+      transition: background 0.12s;
+    }
+    .thinking-header:hover { background: var(--bg-hover); }
+    .thinking-title { font-size: 13px; font-weight: 500; color: var(--text-1); flex: 1; }
+    .thinking-toggle { font-size: 11px; color: var(--text-3); }
+
+    .spinner {
+      width: 13px; height: 13px;
+      border: 1.5px solid var(--border);
+      border-top-color: var(--text-2);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    .spinner.done { border-color: var(--green); border-top-color: var(--green); animation: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .thinking-steps {
+      padding: 10px 0;
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .step {
+      display: flex;
+      gap: 0;
+      padding: 2px 16px;
+      border-left: 2px solid transparent;
+      opacity: 0;
+      animation: fadeUp 0.18s ease forwards;
+    }
+    .step.active { border-left-color: var(--step-accent); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+    .step-icon { width: 18px; flex-shrink: 0; color: var(--text-3); }
+    .step-body { color: var(--text-2); }
+    .step-body b { color: var(--text-1); font-weight: 500; }
+    .ok { color: var(--green); }
+    .err { color: var(--red); }
+    .dim { color: var(--text-3); }
+
+    /* ── Result panels ────────────────────────────────────── */
+    .rec-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+
+    .rec-summary { padding: 18px 20px; border-bottom: 1px solid var(--border); }
+    .rec-text { font-size: 14px; color: var(--text-1); line-height: 1.7; }
+    .rec-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+    /* ── Badges ───────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 500;
+      padding: 3px 8px; border-radius: 4px; border: 1px solid;
+      white-space: nowrap;
+    }
+    .badge-green  { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green-text); }
+    .badge-red    { background: var(--red-bg);    border-color: var(--red-border);    color: var(--red-text); }
+    .badge-amber  { background: var(--amber-bg);  border-color: var(--amber-border);  color: var(--amber-text); }
+    .badge-neutral{ background: var(--bg-hover);  border-color: var(--border);        color: var(--text-2); }
+
+    /* ── Flight card ──────────────────────────────────────── */
+    .flights-list { display: flex; flex-direction: column; }
+    .flight-card {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 20px;
+      transition: background 0.12s;
+      cursor: default;
+    }
+    .flight-card:last-child { border-bottom: none; }
+    .flight-card:hover { background: var(--bg-hover); }
+    .flight-card.top { background: var(--bg-hover); }
+
+    .fl-left { grid-column: 1; display: flex; flex-direction: column; gap: 3px; }
+    .fl-right { grid-column: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+    .fl-airline { font-size: 14px; font-weight: 600; color: var(--text-1); display: flex; align-items: center; gap: 8px; }
+    .fl-meta { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+    .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
+    .fl-route { font-family: "SF Mono","Fira Code",monospace; font-size: 13px; font-weight: 500; color: var(--text-1); letter-spacing: 0.3px; margin-top: 2px; }
+    .fl-time { font-size: 12px; color: var(--text-2); }
+    .fl-price { font-size: 20px; font-weight: 700; color: var(--text-1); letter-spacing: -0.5px; }
+
+    .btn-book {
+      font-family: "Inter", sans-serif;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-1);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-book:hover { border-color: var(--border-focus); background: var(--bg-hover); }
+
+    /* Violations */
+    .violations-block { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .violations-title { font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+    .violation-row { font-size: 13px; color: var(--red-text); padding: 5px 0; border-bottom: 1px solid var(--red-border); display: flex; gap: 8px; }
+    .violation-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .nearest { margin-top: 10px; padding: 10px 12px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 6px; font-size: 12px; color: var(--green-text); line-height: 1.5; }
+
+    .more-note { padding: 11px 20px; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--border); }
+
+    /* Booking confirm */
+    .confirm-block { padding: 16px 20px; }
+    .confirm-block .confirm-title { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .confirm-block .confirm-detail { font-size: 12px; color: var(--text-2); line-height: 1.6; }
+    .confirm-block .booking-id { font-family: monospace; font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+    /* Datalist airport hints */
+    datalist { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ───────────────────────────────────────────── -->
+<header>
+  <div class="logo">✈ TripEnforce</div>
+  <div class="divider"></div>
+  <div class="subtitle">Corporate Travel</div>
+  <div class="header-right">
+    <span class="hdr-label">Booking as</span>
+    <select id="userSelect">
+      <option value="00000000-0000-0000-0000-000000000011">Bob Employee</option>
+      <option value="00000000-0000-0000-0000-000000000012">Carol Frequent</option>
+      <option value="00000000-0000-0000-0000-000000000010">Alice Manager</option>
+    </select>
+    <a href="/admin" class="admin-link">Admin</a>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+  </div>
+</header>
+
+<!-- ── Airport datalist ──────────────────────────────────── -->
+<datalist id="airports">
+  <option value="ORD">Chicago O'Hare</option>
+  <option value="MDW">Chicago Midway</option>
+  <option value="JFK">New York JFK</option>
+  <option value="LGA">New York LaGuardia</option>
+  <option value="EWR">Newark</option>
+  <option value="LAX">Los Angeles</option>
+  <option value="SFO">San Francisco</option>
+  <option value="SEA">Seattle</option>
+  <option value="DEN">Denver</option>
+  <option value="DFW">Dallas/Fort Worth</option>
+  <option value="ATL">Atlanta</option>
+  <option value="MIA">Miami</option>
+  <option value="BOS">Boston</option>
+  <option value="LHR">London Heathrow</option>
+  <option value="CDG">Paris Charles de Gaulle</option>
+  <option value="NRT">Tokyo Narita</option>
+  <option value="DXB">Dubai</option>
+  <option value="SIN">Singapore</option>
+  <option value="AMS">Amsterdam</option>
+  <option value="FRA">Frankfurt</option>
+</datalist>
+
+<!-- ── Main ─────────────────────────────────────────────── -->
+<div class="main" id="main">
+  <div class="center" id="center">
+
+    <!-- Form view -->
+    <div id="formView">
+      <div class="form-card">
+        <div class="form-title">Book a flight</div>
+
+        <div class="form-grid">
+          <div class="row-2">
+            <div class="field">
+              <label>From</label>
+              <input type="text" id="origin" placeholder="ORD" list="airports" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label>To</label>
+              <input type="text" id="destination" placeholder="JFK" list="airports" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Depart</label>
+              <input type="date" id="departDate" />
+            </div>
+            <div class="field">
+              <label>Return <span style="font-weight:400;text-transform:none;color:var(--text-3)">(optional)</span></label>
+              <input type="date" id="returnDate" />
+            </div>
+          </div>
+
+          <div class="row-3">
+            <div class="field">
+              <label>Cabin</label>
+              <select id="cabinClass">
+                <option value="economy">Economy</option>
+                <option value="premium_economy">Premium Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Travelers</label>
+              <input type="number" id="travelers" value="1" min="1" max="9" style="padding:9px 11px" />
+            </div>
+          </div>
+        </div>
+
+        <div class="prefs-field" style="margin-top:18px">
+          <label class="prefs-label">Any preferences or constraints? <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+          <textarea id="prefs" placeholder="e.g. window seat, no layovers, United if possible, budget under $400…" rows="1"></textarea>
+        </div>
+
+        <div class="form-footer">
+          <span class="form-hint">Policy is checked automatically. Compliant options ranked by your preferences.</span>
+          <button class="btn-primary" id="searchBtn" onclick="submitSearch()">Search flights</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results view (hidden initially) -->
+    <div id="resultsView" style="display:none;display:flex;flex-direction:column;gap:20px">
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const COMPANY_ID = "00000000-0000-0000-0000-000000000001";
+
+  // ── Theme ──────────────────────────────────────────────
+  const html = document.documentElement;
+  const themeBtn = document.getElementById("themeBtn");
+  setTheme(localStorage.getItem("theme") || "light");
+
+  function setTheme(t) {
+    html.setAttribute("data-theme", t);
+    themeBtn.textContent = t === "light" ? "☾" : "☀";
+    localStorage.setItem("theme", t);
+  }
+  themeBtn.addEventListener("click", () =>
+    setTheme(html.getAttribute("data-theme") === "light" ? "dark" : "light")
+  );
+
+  // ── Prefs textarea auto-resize ─────────────────────────
+  const prefsTA = document.getElementById("prefs");
+  prefsTA.addEventListener("input", () => {
+    prefsTA.style.height = "auto";
+    prefsTA.style.height = Math.min(prefsTA.scrollHeight, 100) + "px";
+  });
+
+  // ── Default depart date to tomorrow ───────────────────
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById("departDate").value = tomorrow.toISOString().slice(0, 10);
+
+  // ── Submit ─────────────────────────────────────────────
+  function submitSearch() {
+    const origin      = document.getElementById("origin").value.trim().toUpperCase();
+    const destination = document.getElementById("destination").value.trim().toUpperCase();
+    const departDate  = document.getElementById("departDate").value;
+    const returnDate  = document.getElementById("returnDate").value;
+    const cabin       = document.getElementById("cabinClass").value;
+    const travelers   = parseInt(document.getElementById("travelers").value) || 1;
+    const prefs       = document.getElementById("prefs").value.trim();
+    const userId      = document.getElementById("userSelect").value;
+
+    if (!origin || !destination || !departDate) {
+      alert("Please fill in From, To, and Depart date.");
+      return;
+    }
+
+    // Build the NL request the agent receives
+    const cabinLabel = { economy: "Economy", premium_economy: "Premium Economy", business: "Business class", first: "First class" }[cabin] || cabin;
+    let request = `${cabinLabel} flight from ${origin} to ${destination}, departing ${departDate}`;
+    if (returnDate) request += `, returning ${returnDate}`;
+    if (travelers > 1) request += `, ${travelers} passengers`;
+    if (prefs) request += `. ${prefs}`;
+
+    // Build readable summary for the header
+    const fmt = (d) => { try { return new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }); } catch { return d; } };
+    const summary = `<strong>${origin} → ${destination}</strong> · ${fmt(departDate)}${returnDate ? " → " + fmt(returnDate) : ""} · ${cabinLabel}${travelers > 1 ? " · " + travelers + " travelers" : ""}`;
+
+    showResults(request, summary, userId, { origin, destination, departDate, returnDate, cabin, travelers });
+  }
+
+  // ── Show results view ──────────────────────────────────
+  function showResults(request, summary, userId, formData) {
+    document.getElementById("formView").style.display = "none";
+    const rv = document.getElementById("resultsView");
+    rv.innerHTML = "";
+    rv.style.display = "flex";
+
+    // Header row
+    const hdr = document.createElement("div");
+    hdr.className = "results-header";
+    hdr.innerHTML = `
+      <button class="back-btn" onclick="resetToForm()">← New search</button>
+      <span class="search-summary">${summary}</span>
+    `;
+    rv.appendChild(hdr);
+
+    // Thinking panel
+    const thinkPanel = mkThinkPanel();
+    rv.appendChild(thinkPanel.el);
+
+    // Run websocket
+    const wsProto = location.protocol === "https:" ? "wss:" : "ws:";
+    const ws = new WebSocket(`${wsProto}//${location.host}/trip/stream`);
+    ws.onopen = () => ws.send(JSON.stringify({ request, user_id: userId, company_id: COMPANY_ID }));
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      handleEvent(data, thinkPanel, rv, userId, formData);
+      document.getElementById("main").scrollTop = document.getElementById("main").scrollHeight;
+    };
+    ws.onerror = () => {
+      thinkPanel.setDone("Connection error");
+      thinkPanel.addStep("✗", '<span class="err">WebSocket connection failed — check server logs.</span>', false);
+    };
+  }
+
+  function resetToForm() {
+    document.getElementById("formView").style.display = "block";
+    const rv = document.getElementById("resultsView");
+    rv.style.display = "none";
+    rv.innerHTML = "";
+  }
+
+  // ── Thinking panel factory ─────────────────────────────
+  function mkThinkPanel() {
+    const el = document.createElement("div");
+    el.className = "thinking-panel";
+    const uid = "t" + Date.now();
+    el.innerHTML = `
+      <div class="thinking-header" onclick="toggleSteps('${uid}', this)">
+        <div class="spinner" id="sp_${uid}"></div>
+        <span class="thinking-title" id="tl_${uid}">Searching…</span>
+        <span class="thinking-toggle">▼</span>
+      </div>
+      <div class="thinking-steps" id="${uid}"></div>
+    `;
+
+    return {
+      el,
+      uid,
+      addStep(icon, html, active) {
+        const steps = document.getElementById(uid);
+        const prev = steps.querySelector(".step.active");
+        if (prev) prev.classList.remove("active");
+        const s = document.createElement("div");
+        s.className = "step" + (active ? " active" : "");
+        s.innerHTML = `<span class="step-icon">${icon}</span><span class="step-body">${html}</span>`;
+        steps.appendChild(s);
+        steps.scrollTop = steps.scrollHeight;
+      },
+      setTitle(t) { document.getElementById("tl_" + uid).textContent = t; },
+      setDone(t) {
+        const sp = document.getElementById("sp_" + uid);
+        sp.classList.add("done");
+        this.setTitle(t || "Done");
+        // Auto-collapse
+        const stepsEl = document.getElementById(uid);
+        const toggle = el.querySelector(".thinking-toggle");
+        stepsEl.style.display = "none";
+        if (toggle) toggle.textContent = "▶";
+      },
+    };
+  }
+
+  function toggleSteps(uid, hdr) {
+    const el = document.getElementById(uid);
+    const toggle = hdr.querySelector(".thinking-toggle");
+    if (el.style.display === "none") { el.style.display = ""; if (toggle) toggle.textContent = "▼"; }
+    else { el.style.display = "none"; if (toggle) toggle.textContent = "▶"; }
+  }
+
+  // ── Handle WS event ────────────────────────────────────
+  function handleEvent(data, think, rv, userId, formData) {
+    if (data.type === "tool_call") {
+      const label = describeCall(data.tool, data.input || {});
+      think.addStep("→", label, true);
+      think.setTitle(label.replace(/<[^>]+>/g, ""));
+
+    } else if (data.type === "tool_result") {
+      think.addStep(" ", describeResult(data.tool, data.result), false);
+
+    } else if (data.type === "done") {
+      think.setDone("Done — " + ((data.result?.recommendation?.all_compliant || []).length) + " compliant options");
+      renderRec(rv, data.result, userId, formData);
+
+    } else if (data.type === "error") {
+      think.setDone("Error");
+      think.addStep("✗", `<span class="err">${esc(data.message)}</span>`, false);
+    }
+  }
+
+  function describeCall(tool, input) {
+    if (tool === "search_flights") {
+      const d = input.departure_date ? ` on ${input.departure_date}` : "";
+      return `Searching <b>${esc(input.origin || "?")} → ${esc(input.destination || "?")}</b>${esc(d)}`;
+    }
+    if (tool === "check_policy") return `Checking policy <span class="dim">$${esc(String(input.price || "?"))} ${esc(input.cabin_class || "")} ${esc(input.airline || "")}</span>`;
+    if (tool === "get_preferences") return `Loading your travel preferences`;
+    if (tool === "categorize_spend") return `Classifying trip purpose`;
+    return `Calling <b>${esc(tool)}</b>`;
+  }
+
+  function describeResult(tool, result) {
+    if (tool === "search_flights" && Array.isArray(result)) {
+      const src = [...new Set(result.map(f => f.source))].join(", ");
+      return `<span class="ok">✓</span> ${result.length} flights found <span class="dim">(${src})</span>`;
+    }
+    if (tool === "check_policy" && result) {
+      return result.compliant
+        ? `<span class="ok">✓ Compliant</span>`
+        : `<span class="err">✗ ${esc((result.violations || ["Violation"])[0].slice(0, 70))}</span>`;
+    }
+    if (tool === "get_preferences" && result) {
+      const n = result.booking_count || 0;
+      const top = (result.preferred_airlines || [])[0];
+      return n > 0
+        ? `<span class="ok">✓</span> ${n} past bookings · ${top ? "prefers " + esc(top) : "no airline pref"}`
+        : `<span class="dim">No preferences yet — building profile after first booking</span>`;
+    }
+    if (tool === "categorize_spend" && result) return `<span class="ok">✓</span> Purpose: <b>${esc(result.trip_purpose || "—")}</b>`;
+    return `<span class="ok">✓</span>`;
+  }
+
+  // ── Render recommendation ──────────────────────────────
+  function renderRec(rv, result, userId, formData) {
+    const rec = result?.recommendation || result;
+    const panel = document.createElement("div");
+    panel.className = "rec-panel";
+
+    // Summary
+    const tags = buildTags(rec);
+    const summaryDiv = document.createElement("div");
+    summaryDiv.className = "rec-summary";
+    summaryDiv.innerHTML = `
+      <div class="rec-text">${esc(rec.recommendation_text || "")}</div>
+      ${tags ? `<div class="rec-tags">${tags}</div>` : ""}
+    `;
+    panel.appendChild(summaryDiv);
+
+    // Violations
+    const violations = rec.violations || [];
+    if (violations.length) {
+      const vb = document.createElement("div");
+      vb.className = "violations-block";
+      vb.innerHTML = `
+        <div class="violations-title">Policy violations</div>
+        ${violations.map(v => `<div class="violation-row"><span>✗</span><span>${esc(v)}</span></div>`).join("")}
+      `;
+      panel.appendChild(vb);
+    }
+
+    // Flights
+    const flights = rec.all_compliant || [];
+    if (flights.length) {
+      const list = document.createElement("div");
+      list.className = "flights-list";
+      flights.slice(0, 5).forEach((f, i) => list.appendChild(mkFlightCard(f, i === 0, userId, formData)));
+      panel.appendChild(list);
+      if (flights.length > 5) {
+        const more = document.createElement("div");
+        more.className = "more-note";
+        more.textContent = `+ ${flights.length - 5} more compliant options`;
+        panel.appendChild(more);
+      }
+    }
+
+    rv.appendChild(panel);
+  }
+
+  function buildTags(rec) {
+    let h = "";
+    if (rec.requires_approval) h += `<span class="badge badge-amber">⚠ Manager approval required</span>`;
+    if (rec.used_preferences)  h += `<span class="badge badge-neutral">Preferences applied</span>`;
+    if (rec.fallback_used)     h += `<span class="badge badge-neutral">Estimated schedules</span>`;
+    const p = rec.trip_purpose;
+    if (p && p !== "business_travel") h += `<span class="badge badge-neutral">${esc(p.replace(/_/g, " "))}</span>`;
+    return h;
+  }
+
+  function mkFlightCard(f, isTop, userId, formData) {
+    const card = document.createElement("div");
+    card.className = "flight-card" + (isTop ? " top" : "");
+
+    const dep = fmtDT(f.departure_time);
+    const arr = fmtDT(f.arrival_time);
+    const dur = f.duration_hours ? `${f.duration_hours}h` : "";
+    const stops = f.stops === 0 ? "Nonstop" : `${f.stops} stop${f.stops > 1 ? "s" : ""}`;
+    const cabin = (f.cabin_class || "").replace(/_/g, " ");
+    const compBadge = `<span class="badge badge-green">✓ Compliant</span>`;
+
+    card.innerHTML = `
+      <div class="fl-left">
+        <div class="fl-airline">
+          ${esc(f.airline || "Unknown")}
+          ${isTop ? `<span class="badge badge-neutral" style="font-size:10px">Top pick</span>` : ""}
+        </div>
+        <div class="fl-meta">
+          <span>${esc(cabin)}</span>
+          <span class="sep"></span>
+          <span>${stops}</span>
+          ${dur ? `<span class="sep"></span><span>${dur}</span>` : ""}
+        </div>
+        <div class="fl-route">${esc(f.origin)} → ${esc(f.destination)}</div>
+        <div class="fl-time">${dep}${arr ? " → " + arr : ""}</div>
+      </div>
+      <div class="fl-right">
+        ${compBadge}
+        <div class="fl-price">$${Number(f.price || 0).toFixed(2)}</div>
+        <button class="btn-book" onclick="bookFlight(this, '${esc(f.flight_id)}', ${safeJson(f)}, '${userId}', '${formData?.origin || ""}', '${formData?.destination || ""}')">Book this flight</button>
+      </div>
+    `;
+    return card;
+  }
+
+  function fmtDT(iso) {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+    } catch { return iso.slice(0, 16).replace("T", " "); }
+  }
+
+  function safeJson(obj) {
+    return JSON.stringify(obj).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+  }
+
+  function esc(s) {
+    return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // ── Book a flight ──────────────────────────────────────
+  function bookFlight(btn, flightId, flight, userId, origin, destination) {
+    btn.disabled = true;
+    btn.textContent = "Booking…";
+
+    fetch(`/book/${encodeURIComponent(flightId)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: userId,
+        company_id: COMPANY_ID,
+        origin: flight.origin || origin,
+        destination: flight.destination || destination,
+        departure_time: flight.departure_time,
+        arrival_time: flight.arrival_time,
+        airline: flight.airline,
+        cabin_class: flight.cabin_class,
+        stops: flight.stops || 0,
+        price: flight.price,
+      }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      const card = btn.closest(".flight-card");
+      const list = card.parentElement;
+
+      // Replace the flight list with a confirmation card
+      const confirm = document.createElement("div");
+      confirm.className = "rec-panel";
+      confirm.innerHTML = `
+        <div class="confirm-block">
+          <div class="confirm-title">
+            ${data.approval_required
+              ? `<span class="badge badge-amber">⚠ Submitted for approval</span>`
+              : `<span class="badge badge-green">✓ Booking confirmed</span>`}
+          </div>
+          <div class="confirm-detail">
+            ${esc(data.message || "Booking recorded.")}
+            ${data.approval_required ? " A manager will review this request." : ""}
+          </div>
+          ${data.booking_id ? `<div class="booking-id">Booking ID: ${esc(data.booking_id)}</div>` : ""}
+        </div>
+      `;
+      list.parentElement.replaceChild(confirm, list);
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.textContent = "Book this flight";
+      alert("Booking failed: " + err.message);
+    });
+  }
+</script>
+</body>
+</html>

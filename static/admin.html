@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TripEnforce Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f7f5;
+      --bg-hover: #f0f0ee;
+      --border: #e5e5e3;
+      --border-focus: #a0a09e;
+      --text: #1a1a19;
+      --text-secondary: #6b6b68;
+      --text-tertiary: #9b9b98;
+      --accent: #2d7d46;
+      --accent-hover: #236338;
+      --accent-light: #e8f5ec;
+      --warn: #c4821a;
+      --warn-light: #fdf3e3;
+      --danger: #c4341a;
+      --danger-light: #fdeae7;
+      --danger-hover: #a32a14;
+      --radius: 8px;
+      --radius-sm: 4px;
+      --sidebar: 220px;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --bg-secondary: #222222;
+      --bg-hover: #2a2a2a;
+      --border: #333333;
+      --border-focus: #555555;
+      --text: #e8e8e6;
+      --text-secondary: #9b9b98;
+      --text-tertiary: #6b6b68;
+      --accent: #4ade80;
+      --accent-hover: #22c55e;
+      --accent-light: #1a2e22;
+      --warn: #fbbf24;
+      --warn-light: #2a2010;
+      --danger: #f87171;
+      --danger-light: #2a1515;
+      --danger-hover: #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 10;
+    }
+    .sidebar-header {
+      padding: 20px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .sidebar-logo span {
+      color: var(--accent);
+    }
+    .sidebar-subtitle {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 8px;
+      overflow-y: auto;
+    }
+    .nav-section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 12px 8px 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.1s, color 0.1s;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text); }
+    .nav-item.active { background: var(--bg-hover); color: var(--text); }
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--warn);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+    .nav-icon { width: 16px; flex-shrink: 0; }
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .back-link {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { color: var(--text-secondary); }
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .theme-btn:hover { background: var(--bg-hover); }
+
+    /* Main content */
+    .main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .topbar {
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .topbar-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-default {
+      background: var(--bg-secondary);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-default:hover { background: var(--bg-hover); border-color: var(--border-focus); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-danger:hover { background: var(--danger-hover); }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    .content { padding: 24px; flex: 1; }
+
+    /* Sections */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Stat cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: var(--bg);
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 4px;
+      letter-spacing: -0.02em;
+    }
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Card */
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .card-count {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-left: auto;
+    }
+    .card-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-hover); }
+    .td-secondary { color: var(--text-secondary); font-size: 12px; }
+
+    /* Badges */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .badge-warn { background: var(--warn-light); color: var(--warn); }
+    .badge-success { background: var(--accent-light); color: var(--accent); }
+    .badge-danger { background: var(--danger-light); color: var(--danger); }
+    .badge-neutral { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
+
+    /* Action row */
+    .action-row { display: flex; gap: 6px; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+    .empty-icon { font-size: 28px; margin-bottom: 8px; }
+
+    /* Toast */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+    .toast {
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      animation: slide-up 0.2s ease;
+      max-width: 320px;
+    }
+    .toast.success { border-color: var(--accent); color: var(--accent); }
+    .toast.error { border-color: var(--danger); color: var(--danger); }
+    @keyframes slide-up {
+      from { transform: translateY(8px); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+
+    /* Policy editor */
+    .policy-editor {
+      padding: 16px;
+    }
+    .rule-row {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rule-row:last-child { border-bottom: none; }
+    .rule-type {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .rule-value { font-size: 13px; color: var(--text); }
+    .rule-delete {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    .rule-delete:hover { color: var(--danger); }
+
+    /* Provider health */
+    .provider-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+    .provider-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .provider-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .provider-status { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+    /* Spend chart */
+    .bar-list { padding: 16px; }
+    .bar-item { margin-bottom: 12px; }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .bar-track {
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    /* Company selector */
+    .company-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .company-selector label { font-size: 12px; color: var(--text-secondary); }
+    .company-selector select {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Add policy rule form */
+    .add-rule-form {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .add-rule-form select, .add-rule-form input {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 13px;
+      color: var(--text);
+      font-family: inherit;
+      min-width: 120px;
+    }
+    .add-rule-form select:focus, .add-rule-form input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+    }
+
+    /* Loading */
+    .loading-row td {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      .sidebar { width: 0; overflow: hidden; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Trip<span>Enforce</span></div>
+    <div class="sidebar-subtitle">Admin Console</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Review</div>
+    <div class="nav-item active" data-section="flagged" onclick="showSection('flagged', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h9l-2 4 2 4H3V2z"/><line x1="3" y1="14" x2="3" y2="2"/></svg>
+      Flagged Bookings
+      <span class="badge" id="flagged-badge" style="display:none">0</span>
+    </div>
+    <div class="nav-section-label">Reporting</div>
+    <div class="nav-item" data-section="spend" onclick="showSection('spend', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/><line x1="8" y1="8" x2="8" y2="10"/><circle cx="8" cy="8" r="1"/></svg>
+      Spend Summary
+    </div>
+    <div class="nav-section-label">Configuration</div>
+    <div class="nav-item" data-section="policy" onclick="showSection('policy', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="10" height="12" rx="1"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="9" x2="10" y2="9"/><line x1="6" y1="12" x2="8" y2="12"/></svg>
+      Policy Rules
+    </div>
+    <div class="nav-item" data-section="providers" onclick="showSection('providers', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2"/></svg>
+      Providers
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
+      Booking app
+    </a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">
+      <span id="theme-label">Dark</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Flagged Bookings</div>
+    <div class="topbar-actions">
+      <div class="company-selector">
+        <label for="company-select">Company</label>
+        <select id="company-select" onchange="onCompanyChange()">
+          <option value="00000000-0000-0000-0000-000000000001">Acme Corp</option>
+        </select>
+      </div>
+      <button class="btn btn-default" onclick="refreshCurrent()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 8A6 6 0 102 8"/><polyline points="14 4 14 8 10 8"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- Flagged bookings -->
+    <div class="section active" id="section-flagged">
+      <div class="stat-grid" id="flagged-stats">
+        <div class="stat-card">
+          <div class="stat-label">Pending Approval</div>
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-sub">bookings awaiting review</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total at Risk</div>
+          <div class="stat-value" id="stat-risk-amount">—</div>
+          <div class="stat-sub">spend in review queue</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Bookings Pending Approval</div>
+          <div class="card-count" id="flagged-count"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Traveler</th>
+                <th>Route</th>
+                <th>Airline / Cabin</th>
+                <th>Price</th>
+                <th>Departure</th>
+                <th>Purpose</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="flagged-tbody">
+              <tr class="loading-row"><td colspan="8">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spend summary -->
+    <div class="section" id="section-spend">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Spend</div>
+          <div class="stat-value" id="spend-total">—</div>
+          <div class="stat-sub" id="spend-records"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Category</div>
+          <div class="stat-value" id="spend-top-cat" style="font-size:16px">—</div>
+          <div class="stat-sub" id="spend-top-cat-val"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Purpose</div>
+          <div class="stat-value" id="spend-top-purpose" style="font-size:16px">—</div>
+          <div class="stat-sub" id="spend-top-purpose-val"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Spend by Category</div></div>
+          <div class="bar-list" id="spend-by-category"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Spend by Trip Purpose</div></div>
+          <div class="bar-list" id="spend-by-purpose"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">By Employee</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Cost Center</th><th>Total Spend</th></tr>
+            </thead>
+            <tbody id="spend-employees"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy editor -->
+    <div class="section" id="section-policy">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Policy Rules</div>
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" onclick="savePolicy()">Save changes</button>
+          </div>
+        </div>
+        <div class="policy-editor" id="policy-rules-list">
+          <div style="color:var(--text-tertiary);font-size:13px">Loading…</div>
+        </div>
+        <div class="add-rule-form">
+          <select id="new-rule-type" onchange="onNewRuleTypeChange()">
+            <option value="">— Rule type —</option>
+            <option value="cabin_class">Max cabin class</option>
+            <option value="spend_limit">Spend limit</option>
+            <option value="hotel_rate">Hotel rate limit</option>
+            <option value="airline_allowlist">Airline allowlist</option>
+          </select>
+          <input id="new-rule-value" type="text" placeholder="Value (e.g. economy, 800)" style="flex:1" />
+          <select id="new-rule-approval" style="display:none">
+            <option value="false">Block (hard)</option>
+            <option value="true">Require approval</option>
+          </select>
+          <button class="btn btn-default btn-sm" onclick="addRule()">Add rule</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Providers -->
+    <div class="section" id="section-providers">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Provider Health</div></div>
+        <div class="provider-grid" id="provider-grid">
+          <div style="color:var(--text-tertiary);font-size:13px;padding:8px">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+  // Theme
+  (function() {
+    const saved = localStorage.getItem('te_theme') || 'light';
+    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('theme-label').textContent = saved === 'dark' ? 'Light' : 'Dark';
+    });
+  })();
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('te_theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? 'Light' : 'Dark';
+  }
+
+  // State
+  let currentSection = 'flagged';
+  let policyRules = [];
+  const sectionTitles = {
+    flagged: 'Flagged Bookings',
+    spend: 'Spend Summary',
+    policy: 'Policy Rules',
+    providers: 'Provider Health',
+  };
+
+  function showSection(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    el.classList.add('active');
+    document.getElementById('topbar-title').textContent = sectionTitles[id];
+    currentSection = id;
+    loadSection(id);
+  }
+
+  function refreshCurrent() { loadSection(currentSection); }
+
+  function onCompanyChange() { loadSection(currentSection); }
+
+  function getCompanyId() {
+    return document.getElementById('company-select').value;
+  }
+
+  function loadSection(id) {
+    if (id === 'flagged') loadFlagged();
+    else if (id === 'spend') loadSpend();
+    else if (id === 'policy') loadPolicy();
+    else if (id === 'providers') loadProviders();
+  }
+
+  // Toast
+  function toast(msg, type = '') {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+
+  // --- Flagged bookings ---
+  async function loadFlagged() {
+    const tbody = document.getElementById('flagged-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Loading…</td></tr>';
+    try {
+      const res = await fetch('/flagged');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      renderFlagged(rows);
+    } catch(e) {
+      tbody.innerHTML = `<tr class="loading-row"><td colspan="8">Error: ${e.message}</td></tr>`;
+    }
+  }
+
+  function renderFlagged(rows) {
+    const tbody = document.getElementById('flagged-tbody');
+    const badge = document.getElementById('flagged-badge');
+    const count = document.getElementById('flagged-count');
+    document.getElementById('stat-pending').textContent = rows.length;
+    const total = rows.reduce((s, r) => s + r.price, 0);
+    document.getElementById('stat-risk-amount').textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    count.textContent = rows.length + ' pending';
+    if (rows.length > 0) {
+      badge.textContent = rows.length;
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
+    if (rows.length === 0) {
+      tbody.innerHTML = `
+        <tr><td colspan="8">
+          <div class="empty-state">
+            <div class="empty-icon">✓</div>
+            No bookings pending approval
+          </div>
+        </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map(r => `
+      <tr id="row-${r.booking_id}">
+        <td>
+          <div style="font-weight:500">${esc(r.user_name)}</div>
+          <div class="td-secondary">${esc(r.user_email)}</div>
+          <div class="td-secondary">${esc(r.cost_center || '—')}</div>
+        </td>
+        <td style="font-weight:500">${esc(r.origin)} → ${esc(r.destination)}</td>
+        <td>
+          <div>${esc(r.airline)}</div>
+          <div class="td-secondary">${esc(r.cabin_class)}</div>
+        </td>
+        <td style="font-weight:600">$${r.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+        <td class="td-secondary">${formatDate(r.departure_time)}</td>
+        <td><span class="badge-pill badge-warn">${esc(r.trip_purpose)}</span></td>
+        <td class="td-secondary">${formatDate(r.created_at)}</td>
+        <td>
+          <div class="action-row">
+            <button class="btn btn-primary btn-sm" onclick="approveBooking('${r.booking_id}')">Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectBooking('${r.booking_id}')">Reject</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function approveBooking(id) {
+    try {
+      const res = await fetch(`/approve/${id}`, { method: 'POST' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      toast('Booking approved', 'success');
+      document.getElementById('row-' + id)?.remove();
+      refreshFlaggedStats();
+    } catch(e) {
+      toast('Approve failed: ' + e.message, 'error');
+    }
+  }
+
+  async function rejectBooking(id) {
+    try {
+      const res = await fetch(`/reject/${id}`, { method: 'POST' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      toast('Booking rejected', '');
+      document.getElementById('row-' + id)?.remove();
+      refreshFlaggedStats();
+    } catch(e) {
+      toast('Reject failed: ' + e.message, 'error');
+    }
+  }
+
+  function refreshFlaggedStats() {
+    const rows = document.querySelectorAll('#flagged-tbody tr[id^="row-"]');
+    const n = rows.length;
+    document.getElementById('stat-pending').textContent = n;
+    const badge = document.getElementById('flagged-badge');
+    if (n > 0) { badge.textContent = n; badge.style.display = ''; }
+    else { badge.style.display = 'none'; }
+    if (n === 0) {
+      document.getElementById('flagged-tbody').innerHTML = `
+        <tr><td colspan="8">
+          <div class="empty-state">
+            <div class="empty-icon">✓</div>
+            No bookings pending approval
+          </div>
+        </td></tr>`;
+    }
+  }
+
+  // --- Spend ---
+  async function loadSpend() {
+    const companyId = getCompanyId();
+    try {
+      const res = await fetch(`/spend/${companyId}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      renderSpend(data);
+    } catch(e) {
+      toast('Spend load failed: ' + e.message, 'error');
+    }
+  }
+
+  function renderSpend(data) {
+    document.getElementById('spend-total').textContent = '$' + data.total_spend.toLocaleString();
+    document.getElementById('spend-records').textContent = data.record_count + ' records';
+
+    const cats = Object.entries(data.by_category).sort((a,b) => b[1]-a[1]);
+    if (cats.length) {
+      document.getElementById('spend-top-cat').textContent = cats[0][0];
+      document.getElementById('spend-top-cat-val').textContent = '$' + cats[0][1].toLocaleString();
+    }
+    const purposes = Object.entries(data.by_trip_purpose).sort((a,b) => b[1]-a[1]);
+    if (purposes.length) {
+      document.getElementById('spend-top-purpose').textContent = purposes[0][0].replace('_',' ');
+      document.getElementById('spend-top-purpose-val').textContent = '$' + purposes[0][1].toLocaleString();
+    }
+
+    const maxCat = cats.length ? cats[0][1] : 1;
+    document.getElementById('spend-by-category').innerHTML = cats.map(([k,v]) => `
+      <div class="bar-item">
+        <div class="bar-label"><span>${esc(k)}</span><span>$${v.toLocaleString()}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/maxCat*100)}%"></div></div>
+      </div>`).join('') || '<div style="color:var(--text-tertiary);font-size:13px">No data</div>';
+
+    const maxPurp = purposes.length ? purposes[0][1] : 1;
+    document.getElementById('spend-by-purpose').innerHTML = purposes.map(([k,v]) => `
+      <div class="bar-item">
+        <div class="bar-label"><span>${esc(k.replace('_',' '))}</span><span>$${v.toLocaleString()}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/maxPurp*100)}%"></div></div>
+      </div>`).join('') || '<div style="color:var(--text-tertiary);font-size:13px">No data</div>';
+
+    document.getElementById('spend-employees').innerHTML = data.by_employee.map(e => `
+      <tr>
+        <td style="font-weight:500">${esc(e.name)}</td>
+        <td class="td-secondary">${esc(e.email)}</td>
+        <td class="td-secondary">${esc(e.cost_center || '—')}</td>
+        <td style="font-weight:600">$${e.total.toLocaleString()}</td>
+      </tr>`).join('') || '<tr class="loading-row"><td colspan="4">No spend records</td></tr>';
+  }
+
+  // --- Policy ---
+  async function loadPolicy() {
+    const companyId = getCompanyId();
+    try {
+      const res = await fetch(`/policy/${companyId}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      policyRules = data.rules || [];
+      renderPolicy();
+    } catch(e) {
+      if (e.message.includes('404')) {
+        policyRules = [];
+        renderPolicy();
+      } else {
+        toast('Policy load failed: ' + e.message, 'error');
+      }
+    }
+  }
+
+  function renderPolicy() {
+    const el = document.getElementById('policy-rules-list');
+    if (policyRules.length === 0) {
+      el.innerHTML = '<div style="color:var(--text-tertiary);font-size:13px;padding:8px 0">No rules defined. Add a rule below.</div>';
+      return;
+    }
+    el.innerHTML = policyRules.map((r, i) => `
+      <div class="rule-row">
+        <div class="rule-type">${ruleTypeLabel(r.type)}</div>
+        <div class="rule-value">${ruleValueDisplay(r)}</div>
+        <button class="rule-delete" title="Remove" onclick="removeRule(${i})">×</button>
+      </div>`).join('');
+  }
+
+  function ruleTypeLabel(t) {
+    return { cabin_class:'Max cabin class', spend_limit:'Spend limit', hotel_rate:'Hotel rate', airline_allowlist:'Airline allowlist' }[t] || t;
+  }
+
+  function ruleValueDisplay(r) {
+    let v = '';
+    if (r.type === 'cabin_class') v = r.value || r.max_cabin || '';
+    else if (r.type === 'spend_limit') v = '$' + (r.value || r.amount || '') + (r.requires_approval ? ' · requires approval' : ' · hard block');
+    else if (r.type === 'hotel_rate') v = '$' + (r.value || r.max_per_night || '') + '/night' + (r.requires_approval ? ' · requires approval' : '');
+    else if (r.type === 'airline_allowlist') v = (r.airlines || [r.value]).join(', ');
+    else v = JSON.stringify(r);
+    return esc(v);
+  }
+
+  function removeRule(i) {
+    policyRules.splice(i, 1);
+    renderPolicy();
+  }
+
+  function onNewRuleTypeChange() {
+    const t = document.getElementById('new-rule-type').value;
+    const showApproval = ['spend_limit', 'hotel_rate'].includes(t);
+    document.getElementById('new-rule-approval').style.display = showApproval ? '' : 'none';
+    const placeholders = {
+      cabin_class: 'e.g. economy',
+      spend_limit: 'e.g. 800',
+      hotel_rate: 'e.g. 250',
+      airline_allowlist: 'e.g. United, Delta',
+    };
+    document.getElementById('new-rule-value').placeholder = placeholders[t] || 'Value';
+  }
+
+  function addRule() {
+    const type = document.getElementById('new-rule-type').value;
+    const value = document.getElementById('new-rule-value').value.trim();
+    const requiresApproval = document.getElementById('new-rule-approval').value === 'true';
+    if (!type || !value) { toast('Select a rule type and enter a value', 'error'); return; }
+
+    let rule = { type };
+    if (type === 'cabin_class') rule.value = value;
+    else if (type === 'spend_limit') { rule.amount = parseFloat(value); rule.requires_approval = requiresApproval; }
+    else if (type === 'hotel_rate') { rule.max_per_night = parseFloat(value); rule.requires_approval = requiresApproval; }
+    else if (type === 'airline_allowlist') rule.airlines = value.split(',').map(s => s.trim()).filter(Boolean);
+
+    policyRules.push(rule);
+    renderPolicy();
+    document.getElementById('new-rule-type').value = '';
+    document.getElementById('new-rule-value').value = '';
+    document.getElementById('new-rule-approval').style.display = 'none';
+  }
+
+  async function savePolicy() {
+    const companyId = getCompanyId();
+    try {
+      const res = await fetch(`/policy/${companyId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rules: policyRules }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'HTTP ' + res.status);
+      }
+      toast('Policy saved', 'success');
+    } catch(e) {
+      toast('Save failed: ' + e.message, 'error');
+    }
+  }
+
+  // --- Providers ---
+  async function loadProviders() {
+    try {
+      const res = await fetch('/providers/health');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      renderProviders(data.providers || {});
+    } catch(e) {
+      toast('Provider load failed: ' + e.message, 'error');
+    }
+  }
+
+  function renderProviders(providers) {
+    const el = document.getElementById('provider-grid');
+    const entries = Object.entries(providers);
+    if (!entries.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:13px">No providers</div>'; return; }
+    const stateClass = { CLOSED: 'badge-success', OPEN: 'badge-danger', HALF_OPEN: 'badge-warn' };
+    el.innerHTML = entries.map(([name, info]) => {
+      const state = info.state || 'UNKNOWN';
+      const cls = stateClass[state] || 'badge-neutral';
+      return `
+        <div class="provider-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="provider-name">${esc(name)}</div>
+            <span class="badge-pill ${cls}">${esc(state)}</span>
+          </div>
+          <div class="provider-status">Failures: ${info.failure_count ?? 0}</div>
+          ${info.configured === false ? '<div class="provider-status" style="color:var(--warn)">Not configured</div>' : ''}
+        </div>`;
+    }).join('');
+  }
+
+  // Utils
+  function esc(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(s) {
+    if (!s) return '—';
+    try {
+      const d = new Date(s);
+      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    } catch { return s; }
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFlagged();
+  });
+</script>
+</body>
+</html>
